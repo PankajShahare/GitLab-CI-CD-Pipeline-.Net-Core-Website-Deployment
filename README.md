@@ -15,8 +15,9 @@
 ## Registering the GitLab repository pipeline to the gitlab-runner
 1. Go the location where the gitlab-runner.exe file is saved e.g D:\Gitlab\gitlab-runner.exe
 2. Open the command prompt with Administrator privileges & follow the below steps
-   - run gitlab-runner.exe register command
-   - Enter the Gitlab url in our case it is **https://gitlab.xyz.com**
+   - run following command
+      ```yaml gitlab-runner.exe register ```
+   - Enter the Gitlab url in our case it is ```yaml https://gitlab.xyz.com ```
    - Enter the desired name for the runner e.g "my-runner"
    - Next it will prompt to enter the executor name. In our case we will use **shell** executor as we are working on Windows.
    - Finally a new file will be created next to gitlab-runner.exe with name "config.toml"
