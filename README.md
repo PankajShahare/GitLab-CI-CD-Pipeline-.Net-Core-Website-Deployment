@@ -1,7 +1,7 @@
 # How to create and run the GitLab CI/CD Pipeline for .NET Core Web application Deployment on IIS
 
 ##Setup
-1. Gitlab on premise account e.g https://gitlab.xyz.com (Consider the GitLab is installed on Ubuntu Server/Desktop instance)
+1. Gitlab on premise account e.g ```https://gitlab.xyz.com``` (Consider the GitLab is installed on Ubuntu Server/Desktop instance)
 2. GitLab Runner : https://docs.gitlab.com/runner/install/windows/
    - Download GitLab Runner from the above link for Windows x64.
    - Extract the .zip file and keep the **gitlab-runner.exe** on the desired location on your computer e.g. D:\Gitlab\gitlab-runner.exe
