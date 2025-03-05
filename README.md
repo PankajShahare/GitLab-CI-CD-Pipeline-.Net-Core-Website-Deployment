@@ -1,5 +1,28 @@
-# GitLab CI/CD Pipeline for .NET Core Website Deployment
+# How to create and run the GitLab CI/CD Pipeline for .NET Core Web application Deployment on IIS
 
+##Setup
+1. Gitlab on premise account e.g https://gitlab.xyz.com (Consider the GitLab is installed on Ubuntu Server/Desktop instance)
+2. GitLab Runner : https://docs.gitlab.com/runner/install/windows/
+   - Download GitLab Runner from the above link for Windows x64.
+   - Extract the .zip file and keep the **gitlab-runner.exe** on the desired location on your computer e.g. D:\Gitlab\gitlab-runner.exe
+   NOTE : GitLab Runner is required to run the pipeline.
+3. Now go to your GitLab Repository, On left side panel look for **Settings > CI/CD > Runners**.
+4. Click on **New Project Runner** button.
+5. In the **Tags** add desired name for the runner tag **e.g windows**
+6. Check **Run Untagged Jobs** and click on **Create Runner**
+7. On next page select the **Windows** as operating system (As our gitlab runner will run on Windows) & copy the **runner authentication token** which looks like --> glrt-t3_Q6xuqabvNynfYKsxE-b2 
+
+## Registering the GitLab repository pipeline to the gitlab-runner
+1. Go the location where the gitlab-runner.exe file is saved e.g D:\Gitlab\gitlab-runner.exe
+2. Open the command prompt with Administrator privileges & follow the below steps
+   - run gitlab-runner.exe register command
+   - Enter the Gitlab url in our case it is **https://gitlab.xyz.com**
+   - Enter the desired name for the runner e.g "my-runner"
+   - Next it will prompt to enter the executor name. In our case we will use **shell** executor as we are working on Windows.
+   - Finally a new file will be created next to gitlab-runner.exe with name "config.toml"
+   - Open the file with the notepad and replace "pwsh" with "powershell", save the file and restart the gitlab-runner using command **gitlab-runner.exe restart**
+   - This will restart the service by applying the changes in the config.toml file.
+ 
 ## Overview
 This GitLab CI/CD pipeline automates the build, testing, and deployment of a .NET Core website. The pipeline consists of three stages:
 1. **Build** - Restores dependencies and compiles the application.
