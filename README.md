@@ -13,6 +13,7 @@ stages:
   - build
   - test
   - deploy
+    
 **Variables**
 
 The pipeline uses environment variables for configuration, ensuring flexibility and security:
@@ -28,11 +29,14 @@ The pipeline uses environment variables for configuration, ensuring flexibility 
 **Before Script**
 
 Before executing any stage, the pipeline confirms the .NET version:
+
 before_script:
   - echo "Using .NET Core version $DOTNET_VERSION"
   - dotnet --version
+  - 
 **Build Stage**
 Compiles the project and creates the deployment package:
+
 build:
   stage: build
   image: mcr.microsoft.com/dotnet/sdk:$DOTNET_VERSION
@@ -42,7 +46,9 @@ build:
   artifacts:
     paths:
       - $PUBLISH_DIR
+      
 **Test Stage**
+
 Runs unit tests and stores test results:
 unit_tests:
   stage: test
@@ -53,17 +59,24 @@ unit_tests:
     when: always
     paths:
       - TestResults/
+      
 **Deploy Stage**
+
 **Overview**
+
 The deploy stage is responsible for transferring the published .NET Core application to a remote server via FTP and restarting the IIS application pool to apply the changes.
+
 **Prerequisites**
+
 Before using the deploy stage, ensure the following:
 •	The FTP server is set up and accessible with valid credentials.
 •	The Windows server hosting IIS allows remote PowerShell execution.
 •	The IIS application pool name matches the configured variable (APP_POOL_NAME).
 •	WinSCP is installed on the deployment server for FTP file transfers.
 •	The deployment script has the necessary permissions to stop and start the IIS application pool.
-**Deployment Step**s
+
+**Deployment Step**
+
 1.	Stop the IIS Application Pool 
 o	This prevents access to the application while updating files.
 o	The script establishes a PowerShell remote session to stop the IIS application pool.
@@ -115,7 +128,9 @@ deploy:
       }
   only:
     - main  # Deploy only from the main branch
+    - 
 **Summary**
+
 •	The pipeline automates the process from build to deployment.
 •	Uses GitLab CI/CD variables for configuration security.
 •	FTP deployment is handled via WinSCP.
