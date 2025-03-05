@@ -24,7 +24,7 @@
    - Open the file with the notepad and replace "pwsh" with "powershell", save the file and restart the gitlab-runner using command **gitlab-runner.exe restart**
    - This will restart the service by applying the changes in the config.toml file.
  
-## Overview
+## GitLab Pipeline Overview
 This GitLab CI/CD pipeline automates the build, testing, and deployment of a .NET Core website. The pipeline consists of three stages:
 1. **Build** - Restores dependencies and compiles the application.
 2. **Test** - Runs unit tests to ensure code quality.
