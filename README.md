@@ -8,8 +8,8 @@
    NOTE : GitLab Runner is required to run the pipeline.
 3. Now go to your GitLab Repository, On left side panel look for **Settings > CI/CD > Runners**.
 4. Click on **New Project Runner** button.
-5. In the **Tags** add desired name for the runner tag **e.g windows**
-6. Check **Run Untagged Jobs** and click on **Create Runner**
+5. In the **Tags** textbox enter the desired name for the runner tag **e.g windows**
+6. Check **Run Untagged Jobs** checkbox and click on **Create Runner**
 7. On next page select the **Windows** as operating system (As our gitlab runner will run on Windows) & copy the **runner authentication token** which looks like --> glrt-t3_Q6xuqabvNynfYKsxE-b2 
 
 ## Registering the GitLab repository pipeline to the gitlab-runner
