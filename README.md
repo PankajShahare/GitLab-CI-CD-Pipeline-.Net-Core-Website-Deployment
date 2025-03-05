@@ -1,16 +1,20 @@
 GitLab CI/CD Pipeline for .NET Core Website Deployment
+
 **Overview**
 This GitLab CI/CD pipeline automates the build, testing, and deployment of a .NET Core website. The pipeline consists of three stages:
 1.	Build - Restores dependencies and compiles the application.
 2.	Test - Runs unit tests to ensure code quality.
 3.	Deploy - Publishes the application to an FTP server and restarts the IIS application pool.
+4.	
 **Pipeline Configuration**
+
 **Stages**
 stages:
   - build
   - test
   - deploy
 **Variables**
+
 The pipeline uses environment variables for configuration, ensuring flexibility and security:
 •	DOTNET_VERSION: Specifies the .NET version (e.g., 6.0).
 •	PROJECT_NAME: The name of the project.
@@ -20,7 +24,9 @@ The pipeline uses environment variables for configuration, ensuring flexibility 
 •	FTP_PASSWORD: FTP password (use GitLab CI/CD variables for security).
 •	FTP_DEPLOY_PATH: The target path on the FTP server.
 •	APP_POOL_NAME: The IIS application pool name.
+
 **Before Script**
+
 Before executing any stage, the pipeline confirms the .NET version:
 before_script:
   - echo "Using .NET Core version $DOTNET_VERSION"
