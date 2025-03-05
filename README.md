@@ -42,6 +42,7 @@ Before executing any stage, the pipeline confirms the .NET version:
 before_script:
   - echo "Using .NET Core version $DOTNET_VERSION"
   - dotnet --version
+  - 
 **Build Stage**
 Compiles the project and creates the deployment package:
 
