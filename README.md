@@ -17,14 +17,23 @@ stages:
 **Variables**
 
 The pipeline uses environment variables for configuration, ensuring flexibility and security:
+
 •	DOTNET_VERSION: Specifies the .NET version (e.g., 6.0).
+
 •	PROJECT_NAME: The name of the project.
+
 •	PUBLISH_DIR: The output directory for published files.
+
 •	FTP_SERVER: The FTP server address.
+
 •	FTP_USER: FTP username.
+
 •	FTP_PASSWORD: FTP password (use GitLab CI/CD variables for security).
+
 •	FTP_DEPLOY_PATH: The target path on the FTP server.
+
 •	APP_POOL_NAME: The IIS application pool name.
+
 
 **Before Script**
 
