@@ -1,6 +1,6 @@
 # How to create and run the GitLab CI/CD Pipeline for .NET Core Web application Deployment on IIS
 
-## Setup
+## GitLab Runner Setup
 1. Gitlab on premise account e.g ```https://gitlab.xyz.com``` (Consider the GitLab is installed on Ubuntu Server/Desktop instance)
 2. GitLab Runner : https://docs.gitlab.com/runner/install/windows/
    - Download GitLab Runner from the above link for Windows x64.
@@ -23,7 +23,15 @@
    - Finally a new file will be created next to gitlab-runner.exe with name "config.toml"
    - Open the file with the notepad and replace "pwsh" with "powershell", save the file and restart the gitlab-runner using command **gitlab-runner.exe restart**
    - This will restart the service by applying the changes in the config.toml file.
- 
+## How gitlab-runner works
+1. When you run the pipeline on GitLab the script looks for the registerd tagged "windows" and execution starts.
+2. It will get the fresh checkout every time we make any changes to the GitLab repository.
+3. Then the application build process starts
+     - Restoring the NuGet Packages
+     - Building the application and creating the deployment package.
+     - The deployment package will be kept at the desired location on the computer.
+     - Thats all the gitlab-runner do.
+
 ## GitLab Pipeline Overview
 This GitLab CI/CD pipeline automates the build, testing, and deployment of a .NET Core website. The pipeline consists of three stages:
 1. **Build** - Restores dependencies and compiles the application.
