@@ -1,51 +1,43 @@
-GitLab CI/CD Pipeline for .NET Core Website Deployment
+# GitLab CI/CD Pipeline for .NET Core Website Deployment
 
-**Overview**
+## Overview
 This GitLab CI/CD pipeline automates the build, testing, and deployment of a .NET Core website. The pipeline consists of three stages:
-1.	Build - Restores dependencies and compiles the application.
-2.	Test - Runs unit tests to ensure code quality.
-3.	Deploy - Publishes the application to an FTP server and restarts the IIS application pool.
-4.	
-**Pipeline Configuration**
+1. **Build** - Restores dependencies and compiles the application.
+2. **Test** - Runs unit tests to ensure code quality.
+3. **Deploy** - Publishes the application to an FTP server and restarts the IIS application pool.
 
-**Stages**
+## Pipeline Configuration
+
+### Stages
+```yaml
 stages:
   - build
   - test
   - deploy
-    
-**Variables**
+```
 
+### Variables
 The pipeline uses environment variables for configuration, ensuring flexibility and security:
+- `DOTNET_VERSION`: Specifies the .NET version (e.g., `6.0`).
+- `PROJECT_NAME`: The name of the project.
+- `PUBLISH_DIR`: The output directory for published files.
+- `FTP_SERVER`: The FTP server address.
+- `FTP_USER`: FTP username.
+- `FTP_PASSWORD`: FTP password (use GitLab CI/CD variables for security).
+- `FTP_DEPLOY_PATH`: The target path on the FTP server.
+- `APP_POOL_NAME`: The IIS application pool name.
 
-•	DOTNET_VERSION: Specifies the .NET version (e.g., 6.0).
-
-•	PROJECT_NAME: The name of the project.
-
-•	PUBLISH_DIR: The output directory for published files.
-
-•	FTP_SERVER: The FTP server address.
-
-•	FTP_USER: FTP username.
-
-•	FTP_PASSWORD: FTP password (use GitLab CI/CD variables for security).
-
-•	FTP_DEPLOY_PATH: The target path on the FTP server.
-
-•	APP_POOL_NAME: The IIS application pool name.
-
-
-**Before Script**
-
+### Before Script
 Before executing any stage, the pipeline confirms the .NET version:
-
+```yaml
 before_script:
   - echo "Using .NET Core version $DOTNET_VERSION"
   - dotnet --version
-  - 
-**Build Stage**
-Compiles the project and creates the deployment package:
+```
 
+## Build Stage
+Compiles the project and creates the deployment package:
+```yaml
 build:
   stage: build
   image: mcr.microsoft.com/dotnet/sdk:$DOTNET_VERSION
@@ -55,10 +47,11 @@ build:
   artifacts:
     paths:
       - $PUBLISH_DIR
-      
-**Test Stage**
+```
 
+## Test Stage
 Runs unit tests and stores test results:
+```yaml
 unit_tests:
   stage: test
   image: mcr.microsoft.com/dotnet/sdk:$DOTNET_VERSION
@@ -68,33 +61,35 @@ unit_tests:
     when: always
     paths:
       - TestResults/
-      
-**Deploy Stage**
+```
 
-**Overview**
+## Deploy Stage
 
+### Overview
 The deploy stage is responsible for transferring the published .NET Core application to a remote server via FTP and restarting the IIS application pool to apply the changes.
 
-**Prerequisites**
-
+### Prerequisites
 Before using the deploy stage, ensure the following:
-•	The FTP server is set up and accessible with valid credentials.
-•	The Windows server hosting IIS allows remote PowerShell execution.
-•	The IIS application pool name matches the configured variable (APP_POOL_NAME).
-•	WinSCP is installed on the deployment server for FTP file transfers.
-•	The deployment script has the necessary permissions to stop and start the IIS application pool.
+- The FTP server is set up and accessible with valid credentials.
+- The Windows server hosting IIS allows remote PowerShell execution.
+- The IIS application pool name matches the configured variable (`APP_POOL_NAME`).
+- WinSCP is installed on the deployment server for FTP file transfers.
+- The deployment script has the necessary permissions to stop and start the IIS application pool.
 
-**Deployment Step**
+### Deployment Steps
+1. **Stop the IIS Application Pool**
+   - This prevents access to the application while updating files.
+   - The script establishes a PowerShell remote session to stop the IIS application pool.
+   
+2. **Upload Files via FTP**
+   - Uses WinSCP to transfer the published files to the remote FTP server.
+   - The pipeline generates a temporary script for WinSCP to execute the file transfer.
+   
+3. **Restart the IIS Application Pool**
+   - Once the deployment is complete, the application pool is restarted.
+   - This allows the updated website to be served to users.
 
-1.	Stop the IIS Application Pool 
-o	This prevents access to the application while updating files.
-o	The script establishes a PowerShell remote session to stop the IIS application pool.
-2.	Upload Files via FTP 
-o	Uses WinSCP to transfer the published files to the remote FTP server.
-o	The pipeline generates a temporary script for WinSCP to execute the file transfer.
-3.	Restart the IIS Application Pool 
-o	Once the deployment is complete, the application pool is restarted.
-o	This allows the updated website to be served to users.
+```yaml
 deploy:
   stage: deploy
   image: mcr.microsoft.com/powershell
@@ -137,12 +132,14 @@ deploy:
       }
   only:
     - main  # Deploy only from the main branch
-    - 
-**Summary**
+```
 
-•	The pipeline automates the process from build to deployment.
-•	Uses GitLab CI/CD variables for configuration security.
-•	FTP deployment is handled via WinSCP.
-•	IIS app pool is restarted for smooth deployment.
-•	Ensures code quality through automated testing.
+## Summary
+- The pipeline automates the process from build to deployment.
+- Uses GitLab CI/CD variables for configuration security.
+- FTP deployment is handled via WinSCP.
+- IIS app pool is restarted for smooth deployment.
+- Ensures code quality through automated testing.
+
 This pipeline ensures a streamlined deployment process for .NET Core applications.
+
