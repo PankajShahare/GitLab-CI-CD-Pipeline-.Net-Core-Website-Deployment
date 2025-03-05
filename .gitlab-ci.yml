@@ -1,0 +1,89 @@
+stages:
+  - build
+  - test
+  - deploy
+
+# variables: 1
+#   DOTNET_VERSION: "6.0" # Change to your .NET version
+#   PROJECT_NAME: "YourProjectName" # Update with your project name
+#   PUBLISH_DIR: "publish/" # Output directory for published files
+#   FTP_SERVER: "ftp.yourserver.com" # FTP server address
+#   FTP_USER: "your-ftp-username" # FTP username
+#   FTP_PASSWORD: "your-ftp-password" # FTP password (use GitLab CI/CD variables for security)
+#   FTP_DEPLOY_PATH: "/your-website-folder" # Target path on the FTP server
+#   APP_POOL_NAME: "YourAppPoolName" # Name of the IIS application pool
+
+before_script:
+  - echo "Using .NET Core version $DOTNET_VERSION"
+  - dotnet --version
+
+build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:$DOTNET_VERSION
+  script:
+    - dotnet restore
+    - dotnet publish -c Release -o $PUBLISH_DIR
+  artifacts:
+    paths:
+      - $PUBLISH_DIR
+
+unit_tests:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:$DOTNET_VERSION
+  script:
+    - dotnet test --logger trx
+  artifacts:
+    when: always
+    paths:
+      - TestResults/
+
+deploy:
+  stage: deploy
+  image: mcr.microsoft.com/powershell
+  before_script:
+    - |
+      echo "Deploying to FTP Server: $FTP_SERVER"
+  script:
+    - |
+      echo "Stopping IIS Application Pool on deployment server: $APP_POOL_NAME"
+    - |
+        $securePassword = ConvertTo-SecureString "Balaji@123" -AsPlainText -Force
+        $credential = New-Object System.Management.Automation.PSCredential ("Administrator", $securePassword)
+
+        Invoke-Command -ComputerName "192.168.1.217" -Credential $credential -ScriptBlock {
+            Import-Module WebAdministration
+            Stop-WebAppPool -Name "deepmarg.com"
+        }
+
+    - |
+        # Define WinSCP path
+        $winscpPath = "C:\\Program Files (x86)\\WinSCP\\winscp.com"
+        echo "${CI_PROJECT_DIR}\\${PUBLISH_DIR}\\*"
+        # Build the WinSCP command script
+        $winscpCommand = @"
+        open ftp://${FTP_USER}:${FTP_PASSWORD}@${FTP_SERVER}
+        put "${CI_PROJECT_DIR}\\${PUBLISH_DIR}\\*" "${FTP_DEPLOY_PATH}/"
+        exit
+        "@
+        
+        # Save the command script to a temporary file
+        $tempFile = [System.IO.Path]::GetTempFileName()
+        Set-Content -Path $tempFile -Value $winscpCommand
+        
+        # Execute WinSCP with the command file
+        & $winscpPath /script=$tempFile
+        
+        # Remove the temporary file after execution
+        Remove-Item $tempFile
+    - |
+      echo "Starting IIS Application Pool on deployment server: $APP_POOL_NAME"
+    - |
+        $securePassword = ConvertTo-SecureString "Balaji@123" -AsPlainText -Force
+        $credential = New-Object System.Management.Automation.PSCredential ("Administrator", $securePassword)
+
+        Invoke-Command -ComputerName "192.168.1.217" -Credential $credential -ScriptBlock {
+            Import-Module WebAdministration
+            Start-WebAppPool -Name "deepmarg.com"
+        }
+  only:
+    - main  # Deploy only from the main branch
